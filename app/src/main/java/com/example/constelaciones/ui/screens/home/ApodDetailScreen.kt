@@ -33,13 +33,13 @@ fun ApodDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Detalles") },
+                title = { Text("Descripcion del día") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Volver",
-                            tint = Color.White
+                            tint = Color.Black
                         )
                     }
                 },

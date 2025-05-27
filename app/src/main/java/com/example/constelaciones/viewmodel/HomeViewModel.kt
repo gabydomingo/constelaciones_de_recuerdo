@@ -43,7 +43,7 @@ class HomeViewModel : ViewModel() {
                 try {
                     val response = RetrofitClient.nasaApi.getApod(
                         date = date,
-                        // apiKey = "TU_API_KEY_AQUI" // Descomenta si usas tu propia clave
+                        apiKey = "tCUSGkgLZCptWme1rPDuoTUU0JQyV3hLRn6uoBlY"
                     )
                     Log.d("APOD_URL", "Imagen para $date: ${response.url}")
                     _apod.value = response
