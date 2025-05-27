@@ -27,11 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.constelaciones.ui.components.BottomNavigationBar
 import com.example.constelaciones.viewmodel.AddMemoryViewModel
 import java.util.*
 
 @Composable
 fun AddMemoryScreen(navController: NavController) {
+
     val context = LocalContext.current
     val viewModel: AddMemoryViewModel = viewModel()
 
@@ -45,7 +47,7 @@ fun AddMemoryScreen(navController: NavController) {
         imageUri = it
     }
 
-    Scaffold { padding ->
+    Scaffold (bottomBar = { BottomNavigationBar(navController) }){ padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()

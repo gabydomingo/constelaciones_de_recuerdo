@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.constelaciones.ui.components.BottomNavigationBar
 import com.example.constelaciones.viewmodel.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
@@ -57,7 +58,7 @@ fun ProfileScreen(navController: NavController) {
         model = profileImageUri ?: profileImageUrl ?: ""
     )
 
-    Scaffold(
+    Scaffold(bottomBar = { BottomNavigationBar(navController) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         Box(

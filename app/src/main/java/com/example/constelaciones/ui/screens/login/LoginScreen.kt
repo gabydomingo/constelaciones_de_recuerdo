@@ -26,6 +26,8 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = and
     val context = LocalContext.current
     val user by authViewModel.user.collectAsState()
 
+
+
     LaunchedEffect(user) {
         if (user != null) {
             navController.navigate("home") {
