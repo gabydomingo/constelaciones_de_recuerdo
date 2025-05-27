@@ -53,6 +53,9 @@ dependencies {
 
     ///implementation("com.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
 
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

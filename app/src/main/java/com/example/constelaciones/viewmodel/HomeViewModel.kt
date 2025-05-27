@@ -4,12 +4,20 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.constelaciones.data.model.ApodResponse
+import com.example.constelaciones.data.remote.LibreTranslateClient
 import com.example.constelaciones.data.remote.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+
+import com.example.constelaciones.data.remote.MyMemoryTranslateClient
+
+///
+import com.example.constelaciones.data.remote.TranslateRequest
+
+
 
 class HomeViewModel : ViewModel() {
 
@@ -19,7 +27,10 @@ class HomeViewModel : ViewModel() {
     private val _imageTitle = MutableStateFlow<String?>(null)
     val imageTitle = _imageTitle.asStateFlow()
 
-    private var hasFetched = false  // Para evitar llamadas múltiples
+    private val _translatedExplanation = MutableStateFlow<String?>(null)
+    val translatedExplanation = _translatedExplanation.asStateFlow()
+
+    private var hasFetched = false // Para evitar llamadas múltiples
 
     init {
         fetchTodayImageIfNeeded()
@@ -47,7 +58,8 @@ class HomeViewModel : ViewModel() {
                     )
                     Log.d("APOD_URL", "Imagen para $date: ${response.url}")
                     _apod.value = response
-                    _imageTitle.value = response.title
+                    _imageTitle.value = "Imagen del día"
+                    translateExplanation(response.explanation)
                     hasFetched = true
                     return@launch
                 } catch (e: retrofit2.HttpException) {
@@ -65,4 +77,47 @@ class HomeViewModel : ViewModel() {
             Log.e("APOD_ERROR", "No se pudo obtener imagen ni para hoy ni para ayer")
         }
     }
+
+    private fun translateExplanation(originalText: String) {
+        viewModelScope.launch {
+            try {
+                Log.d("TRANSLATE_INFO", "Iniciando traducción con MyMemory...")
+                Log.d("TRANSLATE_TEXT", "Texto a traducir (primeros 100 chars): ${originalText.take(100)}...")
+
+                // Limitar el texto más para evitar problemas
+                val textToTranslate = if (originalText.length > 300) {
+                    originalText.take(300) + "..."
+                } else {
+                    originalText
+                }
+
+                val response = MyMemoryTranslateClient.api.translate(
+                    text = textToTranslate,
+                    langPair = "en|es",
+                    email = "constelaciones@example.com"
+                )
+
+                Log.d("TRANSLATE_RESPONSE", "Status: ${response.responseStatus}")
+
+                if (response.responseStatus == 200) {
+                    _translatedExplanation.value = response.responseData.translatedText
+                    Log.d("TRANSLATE_SUCCESS", "Traducción exitosa: ${response.responseData.translatedText.take(50)}...")
+                } else {
+                    Log.e("TRANSLATE_ERROR", "Error en respuesta: ${response.responseStatus}")
+                    _translatedExplanation.value = originalText
+                }
+
+            } catch (e: retrofit2.HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e("TRANSLATE_ERROR", "Error HTTP: ${e.code()} - ${e.message()}")
+                Log.e("TRANSLATE_ERROR", "Error body: $errorBody")
+                _translatedExplanation.value = originalText
+            } catch (e: Exception) {
+                Log.e("TRANSLATE_ERROR", "Error general al traducir: ${e.message}", e)
+                _translatedExplanation.value = originalText
+            }
+        }
+    }
+
+
 }

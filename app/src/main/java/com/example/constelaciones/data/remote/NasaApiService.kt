@@ -5,6 +5,8 @@ import com.example.constelaciones.data.model.NasaImageResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+////////////
+
 interface NasaApiService {
     @GET("search")
     suspend fun searchImages(
@@ -16,4 +18,5 @@ interface NasaApiService {
         @Query("api_key") apiKey: String = "tCUSGkgLZCptWme1rPDuoTUU0JQyV3hLRn6uoBlY",
         @Query("date") date: String? = null
     ): ApodResponse
+
 }

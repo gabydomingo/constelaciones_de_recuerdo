@@ -2,8 +2,10 @@ package com.example.constelaciones.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -21,6 +23,13 @@ import coil.compose.AsyncImage
 import com.example.constelaciones.viewmodel.HomeViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
+
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.*
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApodDetailScreen(
@@ -29,6 +38,7 @@ fun ApodDetailScreen(
 ) {
     val apod by viewModel.apod.collectAsState()
     val scrollState = rememberScrollState()
+    var isTextExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -80,11 +90,69 @@ fun ApodDetailScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                val translatedExplanation by viewModel.translatedExplanation.collectAsState()
+                val textToShow = translatedExplanation ?: it.explanation
+
+                // Definir límite de caracteres para vista previa
+                val previewLength = 200
+                val showExpandButton = textToShow.length > previewLength
+
+                // Mostrar texto completo o recortado según el estado
+                val displayText = if (isTextExpanded || !showExpandButton) {
+                    textToShow
+                } else {
+                    textToShow.take(previewLength) + "..."
+                }
+
                 Text(
-                    text = it.explanation,
+                    text = displayText,
                     color = Color.White,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp
                 )
+
+                // Botón para expandir/contraer
+                if (showExpandButton) {
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                color = Color.White.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(20.dp)
+                            )
+                            .clickable { isTextExpanded = !isTextExpanded }
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = if (isTextExpanded) "Mostrar menos" else "Leer descripción completa",
+                                color = Color.White,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Icon(
+                                imageVector = if (isTextExpanded)
+                                    Icons.Default.KeyboardArrowUp else
+                                    Icons.Default.KeyboardArrowDown,
+                                contentDescription = if (isTextExpanded) "Contraer" else "Expandir",
+                                tint = Color.White,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
             } ?: Text("No hay datos disponibles", color = Color.White)
         }
     }
