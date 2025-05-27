@@ -37,19 +37,31 @@ fun ApodDetailScreen(
     viewModel: HomeViewModel = viewModel()
 ) {
     val apod by viewModel.apod.collectAsState()
+    val translatedExplanation by viewModel.translatedExplanation.collectAsState()
+    val isSpanish by viewModel.isSpanish.collectAsState()
+
     val scrollState = rememberScrollState()
     var isTextExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Descripcion del día") },
+                title = { Text("Descripción del día") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Volver",
                             tint = Color.Black
+                        )
+                    }
+                },
+                actions = {
+                    TextButton(onClick = { viewModel.toggleLanguage() }) {
+                        Text(
+                            text = if (isSpanish) "IN" else "ES",
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 },
@@ -90,18 +102,22 @@ fun ApodDetailScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                val translatedExplanation by viewModel.translatedExplanation.collectAsState()
-                val textToShow = translatedExplanation ?: it.explanation
+                // Texto según idioma
+                val explanationText = if (isSpanish) {
+                    translatedExplanation ?: it.explanation
+                } else {
+                    it.explanation
+                }
 
                 // Definir límite de caracteres para vista previa
                 val previewLength = 200
-                val showExpandButton = textToShow.length > previewLength
+                val showExpandButton = explanationText.length > previewLength
 
                 // Mostrar texto completo o recortado según el estado
                 val displayText = if (isTextExpanded || !showExpandButton) {
-                    textToShow
+                    explanationText
                 } else {
-                    textToShow.take(previewLength) + "..."
+                    explanationText.take(previewLength) + "..."
                 }
 
                 Text(

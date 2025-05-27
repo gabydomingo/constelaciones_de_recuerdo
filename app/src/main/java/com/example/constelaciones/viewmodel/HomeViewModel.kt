@@ -85,11 +85,8 @@ class HomeViewModel : ViewModel() {
                 Log.d("TRANSLATE_TEXT", "Texto a traducir (primeros 100 chars): ${originalText.take(100)}...")
 
                 // Limitar el texto más para evitar problemas
-                val textToTranslate = if (originalText.length > 300) {
-                    originalText.take(300) + "..."
-                } else {
-                    originalText
-                }
+                val textToTranslate = originalText
+
 
                 val response = MyMemoryTranslateClient.api.translate(
                     text = textToTranslate,
@@ -116,8 +113,19 @@ class HomeViewModel : ViewModel() {
                 Log.e("TRANSLATE_ERROR", "Error general al traducir: ${e.message}", e)
                 _translatedExplanation.value = originalText
             }
+
+
         }
+
     }
+
+    private val _isSpanish = MutableStateFlow(true)
+    val isSpanish = _isSpanish.asStateFlow()
+
+    fun toggleLanguage() {
+        _isSpanish.value = !_isSpanish.value
+    }
+
 
 
 }
