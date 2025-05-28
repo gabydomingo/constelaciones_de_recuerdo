@@ -11,7 +11,7 @@ import com.example.constelaciones.ui.screens.login.LoginScreen
 import com.example.constelaciones.ui.screens.profile.ProfileScreen
 import com.example.constelaciones.ui.screens.splash.SplashScreen
 import com.example.constelaciones.ui.screens.nuevoRecuerdo.AddMemoryScreen
-
+import com.example.constelaciones.ui.screens.timeline.TimelineScreen
 
 
 @Composable
@@ -38,7 +38,9 @@ fun NavGraph(navController: NavHostController) {
         composable("apodDetail") {
             ApodDetailScreen(navController)
         }
-
+        composable("timeline") {
+            TimelineScreen(navController)
+        }
     }
 }
 

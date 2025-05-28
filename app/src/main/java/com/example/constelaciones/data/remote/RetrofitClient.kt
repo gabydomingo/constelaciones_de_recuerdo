@@ -8,6 +8,7 @@ object RetrofitClient {
     private const val BASE_URL = "https://api.nasa.gov/"
     private const val BASE_SEARCH_URL = "https://images-api.nasa.gov/"
 
+
     // Cliente para APOD
 
     val nasaApi: NasaApiService by lazy {
@@ -28,5 +29,17 @@ object RetrofitClient {
             .create(NasaApiService::class.java)
     }
 
+    val nasaEventApi: NasaEventApi by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://images-api.nasa.gov/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(NasaEventApi::class.java)
+    }
+
 }
+
+
+
+
 

@@ -65,6 +65,14 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+
+                //// buscar linea de tiempo
+                Button(
+                    onClick = { navController.navigate("timeline") }
+                ) {
+                    Text("Explorar Línea de Tiempo")
+                }
+
                 // Contenedor dinámico
                 Box(
                     modifier = Modifier
@@ -118,5 +126,10 @@ fun HomeScreen(
                 }
             }
         }
+
+
     }
+
+
+
 }
