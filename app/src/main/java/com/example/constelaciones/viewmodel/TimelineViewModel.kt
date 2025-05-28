@@ -1,14 +1,15 @@
 package com.example.constelaciones.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.constelaciones.data.model.NasaEvent
+import com.example.constelaciones.data.remote.LibreTranslateClient
+import com.example.constelaciones.data.remote.MyMemoryTranslateClient
 import com.example.constelaciones.data.remote.RetrofitClient
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import com.example.constelaciones.data.remote.TranslateRequest
 import kotlinx.coroutines.flow.*
-
+import kotlinx.coroutines.launch
 
 class TimelineViewModel : ViewModel() {
 
@@ -18,13 +19,10 @@ class TimelineViewModel : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
-    val filteredEvents = combine(_events, _searchQuery) { events, query ->
-        if (query.isBlank()) {
-            events
-        } else {
-            events.filter { it.title.contains(query, ignoreCase = true) }
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    private val _searchResults = MutableStateFlow<List<NasaEvent>>(emptyList())
+    val searchResults = _searchResults.asStateFlow()
+
+    private val _translatedDescriptions = mutableMapOf<String, String>()
 
     init {
         fetchAstronomyEvents()
@@ -32,6 +30,12 @@ class TimelineViewModel : ViewModel() {
 
     fun onSearchQueryChange(query: String) {
         _searchQuery.value = query
+
+        if (query.isNotBlank()) {
+            searchEventsFromApi(query)
+        } else {
+            _searchResults.value = emptyList()
+        }
     }
 
     private fun fetchAstronomyEvents() {
@@ -58,6 +62,72 @@ class TimelineViewModel : ViewModel() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    private fun searchEventsFromApi(query: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.nasaEventApi.searchEvents(query = query)
+                val items = response.collection.items
+
+                val events = items.mapNotNull { item ->
+                    val data = item.data.firstOrNull()
+                    val image = item.links.firstOrNull()?.href
+
+                    if (data != null && image != null) {
+                        NasaEvent(
+                            title = data.title,
+                            date = data.date_created.substring(0, 10),
+                            description = translateWithFallback(data.description),
+                            imageUrl = image
+                        )
+                    } else null
+                }
+
+                _searchResults.value = events
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _searchResults.value = emptyList()
+            }
+        }
+    }
+
+    private suspend fun translateWithFallback(original: String): String {
+        // Evitar traducir el mismo texto más de una vez
+        _translatedDescriptions[original]?.let { return it }
+
+        try {
+            val memoryResponse = MyMemoryTranslateClient.api.translate(
+                text = original,
+                langPair = "en|es",
+                email = "domingogaby8@gmail.com",
+                apiKey = "4baef49ce12c2609e0a2"
+            )
+
+            if (memoryResponse.responseStatus == 200) {
+                val result = memoryResponse.responseData.translatedText
+                _translatedDescriptions[original] = result
+                return result
+            } else {
+                Log.e("TRANSLATE", "MyMemory falló, probando fallback...")
+            }
+
+        } catch (e: Exception) {
+            Log.e("TRANSLATE", "Error en MyMemory: ${e.message}")
+        }
+
+        // Fallback con LibreTranslate
+        return try {
+            val libreResponse = LibreTranslateClient.api.translate(
+                TranslateRequest(q = original)
+            )
+            val result = libreResponse.translatedText
+            _translatedDescriptions[original] = result
+            result
+        } catch (e: Exception) {
+            Log.e("TRANSLATE", "Error en LibreTranslate: ${e.message}")
+            original
         }
     }
 }

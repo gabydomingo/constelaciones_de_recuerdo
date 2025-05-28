@@ -35,6 +35,7 @@ interface MyMemoryApi {
     suspend fun translate(
         @Query("q") text: String,
         @Query("langpair") langPair: String = "en|es",
-        @Query("de") email: String = "constelaciones@example.com" // Email requerido para más requests
+        @Query("de") email: String = "domingogaby8@gmail.com",
+        @Query("key") apiKey: String = "4baef49ce12c2609e0a2"
     ): MyMemoryResponse
 }

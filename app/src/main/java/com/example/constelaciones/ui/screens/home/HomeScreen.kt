@@ -65,14 +65,6 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-
-                //// buscar linea de tiempo
-                Button(
-                    onClick = { navController.navigate("timeline") }
-                ) {
-                    Text("Explorar Línea de Tiempo")
-                }
-
                 // Contenedor dinámico
                 Box(
                     modifier = Modifier
@@ -81,8 +73,11 @@ fun HomeScreen(
                         .shadow(8.dp, RoundedCornerShape(16.dp))
                         .background(Color(0xFF1F1B5E)),
                     contentAlignment = Alignment.Center
-                ) {
-                    when (apod?.media_type) {
+
+                )
+
+
+                { when (apod?.media_type) {
                         "image" -> {
                             AsyncImage(
                                 model = apod?.url,
@@ -100,6 +95,7 @@ fun HomeScreen(
 
                         }
 
+
                         "video" -> {
                             Text(
                                 text = "Tocar para ver el video",
@@ -115,6 +111,7 @@ fun HomeScreen(
                             )
                         }
 
+
                         else -> {
                             Text(
                                 text = "Cargando contenido de la NASA...",
@@ -123,6 +120,12 @@ fun HomeScreen(
                             )
                         }
                     }
+                }
+                //// buscar linea de tiempo
+                Button(
+                    onClick = { navController.navigate("timeline") }
+                ) {
+                    Text("Explorar Línea de Tiempo")
                 }
             }
         }

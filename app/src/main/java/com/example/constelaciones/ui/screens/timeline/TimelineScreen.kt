@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -16,12 +15,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.constelaciones.viewmodel.TimelineViewModel
 import androidx.navigation.NavController
+import java.net.URLEncoder
+import androidx.compose.foundation.clickable
+
 
 @Composable
 fun TimelineScreen(navController: NavController) {
     val viewModel: TimelineViewModel = viewModel()
     val searchQuery by viewModel.searchQuery.collectAsState()
-    val filteredEvents by viewModel.filteredEvents.collectAsState()
+    val searchResults by viewModel.searchResults.collectAsState()
+    val defaultEvents by viewModel.events.collectAsState()
+
+    val eventsToDisplay = if (searchQuery.isNotBlank()) searchResults else defaultEvents
+
+
 
     Scaffold { padding ->
         Column(
@@ -62,15 +69,21 @@ fun TimelineScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             LazyColumn {
-                items(filteredEvents.size) { index ->
-                    val event = filteredEvents[index]
+                items(eventsToDisplay.size) { index ->
+                    val event = eventsToDisplay[index]
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
                             .background(Color(0xFF1E1E3F), shape = MaterialTheme.shapes.medium)
+                            .clickable {
+                                val encodedImage = URLEncoder.encode(event.imageUrl, "UTF-8")
+                                val encodedDesc = URLEncoder.encode(event.description, "UTF-8")
+                                navController.navigate("eventoDetalle/${event.title}/${event.date}/${encodedImage}/${encodedDesc}")
+                            }
                             .padding(12.dp)
-                    ) {
+                    )
+                    {
                         Text(event.date, color = Color.Gray, fontSize = 12.sp)
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(event.title, color = Color.White, fontSize = 16.sp)
@@ -87,6 +100,7 @@ fun TimelineScreen(navController: NavController) {
                     }
                 }
             }
+
         }
     }
 }
