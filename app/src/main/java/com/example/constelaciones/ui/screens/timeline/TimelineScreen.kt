@@ -20,7 +20,8 @@ import androidx.navigation.NavController
 @Composable
 fun TimelineScreen(navController: NavController) {
     val viewModel: TimelineViewModel = viewModel()
-    val events by viewModel.events.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val filteredEvents by viewModel.filteredEvents.collectAsState()
 
     Scaffold { padding ->
         Column(
@@ -36,11 +37,33 @@ fun TimelineScreen(navController: NavController) {
         ) {
             Text("Línea de Tiempo Astronómica", fontSize = 20.sp, color = Color.White)
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { viewModel.onSearchQueryChange(it) },
+                placeholder = { Text("Buscar evento...") },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White.copy(alpha = 0.1f), shape = MaterialTheme.shapes.small),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color.White,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = Color.White,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedPlaceholderColor = Color.LightGray,
+                    unfocusedPlaceholderColor = Color.LightGray
+                )
+            )
+
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             LazyColumn {
-                items(events.size) { index ->
-                    val event = events[index]
+                items(filteredEvents.size) { index ->
+                    val event = filteredEvents[index]
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()

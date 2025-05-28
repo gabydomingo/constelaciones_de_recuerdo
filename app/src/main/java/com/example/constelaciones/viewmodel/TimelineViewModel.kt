@@ -7,14 +7,31 @@ import com.example.constelaciones.data.remote.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.*
+
 
 class TimelineViewModel : ViewModel() {
 
     private val _events = MutableStateFlow<List<NasaEvent>>(emptyList())
     val events = _events.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+
+    val filteredEvents = combine(_events, _searchQuery) { events, query ->
+        if (query.isBlank()) {
+            events
+        } else {
+            events.filter { it.title.contains(query, ignoreCase = true) }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     init {
         fetchAstronomyEvents()
+    }
+
+    fun onSearchQueryChange(query: String) {
+        _searchQuery.value = query
     }
 
     private fun fetchAstronomyEvents() {
