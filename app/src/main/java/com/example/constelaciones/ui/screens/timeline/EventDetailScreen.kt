@@ -21,7 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import java.net.URLDecoder
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.constelaciones.viewmodel.EventDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,10 +35,18 @@ fun EventDetailScreen(
     descriptionEncoded: String
 ) {
     val imageUrl = URLDecoder.decode(imageUrlEncoded, "UTF-8")
-    val description = URLDecoder.decode(descriptionEncoded, "UTF-8")
+    val originalDescription = URLDecoder.decode(descriptionEncoded, "UTF-8")
+
+    val viewModel: EventDetailViewModel = viewModel(
+        factory = EventDetailViewModel.Factory(originalDescription)
+    )
+
+    val translated by viewModel.translated.collectAsState()
+    val isSpanish by viewModel.isSpanish.collectAsState()
+
+    val description = if (isSpanish) translated ?: originalDescription else originalDescription
 
     var isTextExpanded by remember { mutableStateOf(false) }
-
     val previewLength = 200
     val showExpandButton = description.length > previewLength
     val displayText = if (isTextExpanded || !showExpandButton) description else description.take(previewLength) + "..."
@@ -47,7 +57,12 @@ fun EventDetailScreen(
                 title = { Text("Detalle del Evento") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = Color.White)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = Color.Black)
+                    }
+                },
+                actions = {
+                    TextButton(onClick = { viewModel.toggleLanguage() }) {
+                        Text(if (isSpanish) "IN" else "ES", color = Color.Black)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
