@@ -121,11 +121,21 @@ fun HomeScreen(
                         }
                     }
                 }
-                //// buscadorr
+                /// boton linea de tiempo
                 Button(
                     onClick = { navController.navigate("timeline") }
                 ) {
                     Text("Explorar Línea de Tiempo")
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                ///boton chat ia
+                Button(
+                    onClick = { navController.navigate("chat") },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
+                ) {
+                    Text("Hablar con la IA", color = Color.White)
                 }
             }
         }

@@ -8,6 +8,7 @@ plugins {
 
 }
 
+
 android {
     namespace = "com.example.constelaciones"
     compileSdk = 35
@@ -55,6 +56,9 @@ dependencies {
 
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 
+    ///implementation("com.google.ai.client.generativeai:generativeai:0.4.0")
+
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
 
 
     implementation(libs.androidx.core.ktx)
@@ -78,6 +82,8 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.storage.ktx)
+    implementation(libs.generativeai)
+    implementation(libs.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

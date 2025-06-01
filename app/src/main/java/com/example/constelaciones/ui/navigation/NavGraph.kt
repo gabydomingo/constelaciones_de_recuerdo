@@ -13,6 +13,7 @@ import com.example.constelaciones.ui.screens.splash.SplashScreen
 import com.example.constelaciones.ui.screens.nuevoRecuerdo.AddMemoryScreen
 import com.example.constelaciones.ui.screens.timeline.TimelineScreen
 import com.example.constelaciones.ui.screens.timeline.timelineDetailRoute
+import com.example.constelaciones.ui.screens.chat.ChatScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -40,7 +41,13 @@ fun NavGraph(navController: NavHostController) {
         }
         composable("timeline") {
             TimelineScreen(navController)
+
         }
+
         timelineDetailRoute(navController)
+
+        composable("chat") {
+            ChatScreen()
+        }
     }
 }

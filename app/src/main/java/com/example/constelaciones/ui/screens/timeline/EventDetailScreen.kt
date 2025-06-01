@@ -34,6 +34,8 @@ fun EventDetailScreen(
     imageUrlEncoded: String,
     descriptionEncoded: String
 ) {
+    val decodedTitle = URLDecoder.decode(title, "UTF-8")
+    val decodedDate = URLDecoder.decode(date, "UTF-8")
     val imageUrl = URLDecoder.decode(imageUrlEncoded, "UTF-8")
     val originalDescription = URLDecoder.decode(descriptionEncoded, "UTF-8")
 
@@ -78,13 +80,13 @@ fun EventDetailScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(title, fontSize = 22.sp, color = Color.White)
+            Text(decodedTitle, fontSize = 22.sp, color = Color.White)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(date, fontSize = 14.sp, color = Color.Gray)
+            Text(decodedDate, fontSize = 14.sp, color = Color.Gray)
             Spacer(modifier = Modifier.height(16.dp))
             Image(
                 painter = rememberAsyncImagePainter(imageUrl),
-                contentDescription = title,
+                contentDescription = decodedTitle,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
