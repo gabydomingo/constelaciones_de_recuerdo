@@ -13,7 +13,7 @@ import com.example.constelaciones.ui.screens.splash.SplashScreen
 import com.example.constelaciones.ui.screens.nuevoRecuerdo.AddMemoryScreen
 import com.example.constelaciones.ui.screens.timeline.TimelineScreen
 import com.example.constelaciones.ui.screens.timeline.timelineDetailRoute
-import com.example.constelaciones.ui.screens.chat.ChatScreen
+import com.example.constelaciones.ui.screens.chatScreen.ChatScreen
 import com.example.constelaciones.ui.screens.friends.friendScreen
 
 @Composable
