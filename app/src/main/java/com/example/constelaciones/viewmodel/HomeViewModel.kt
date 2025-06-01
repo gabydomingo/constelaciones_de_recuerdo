@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.constelaciones.data.model.ApodResponse
-import com.example.constelaciones.data.remote.LibreTranslateClient
 import com.example.constelaciones.data.remote.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -78,7 +77,7 @@ class HomeViewModel : ViewModel() {
                 Log.d("TRANSLATE_INFO", "Iniciando traducción con MyMemory...")
                 Log.d("TRANSLATE_TEXT", "Texto a traducir (primeros 100 chars): ${originalText.take(100)}...")
 
-                // Limitar el texto más para evitar problemas
+
                 val textToTranslate = originalText
 
 

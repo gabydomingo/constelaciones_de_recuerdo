@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object LibreTranslateClient {
-    // URL corregida - debe terminar con /
+    // siempre tengo que poner esta url con / al final
     private const val BASE_URL = "https://libretranslate.com/api/v1/"
 
     val api: LibreTranslateApi by lazy {

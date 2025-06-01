@@ -84,7 +84,7 @@ class TimelineViewModel : ViewModel() {
                         NasaEvent(
                             title = data.title,
                             date = data.date_created.substring(0, 10),
-                            description = data.description, // ya no se traduce acá
+                            description = data.description,
                             imageUrl = image
                         )
                     } else null

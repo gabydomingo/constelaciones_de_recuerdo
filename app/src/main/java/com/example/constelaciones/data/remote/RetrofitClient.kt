@@ -2,7 +2,7 @@ package com.example.constelaciones.data.remote
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
+
 
 object RetrofitClient {
     private const val BASE_URL = "https://api.nasa.gov/"
@@ -19,7 +19,7 @@ object RetrofitClient {
             .create(NasaApiService::class.java)
     }
 
-    // Cliente para Search (para usar separado)
+    // Cliente para Search (para usar separadoss)
 
     val nasaSearchApi: NasaApiService by lazy {
         Retrofit.Builder()

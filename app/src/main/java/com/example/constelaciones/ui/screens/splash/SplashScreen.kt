@@ -21,7 +21,7 @@ import kotlin.random.Random
 fun SplashScreen(navController: NavController) {
     val points = remember { mutableStateListOf<Offset>() }
 
-    // Animación de opacidad para constelación
+    // animacion de opacidad para constelacion generada
     val infiniteTransition = rememberInfiniteTransition()
     val alphaAnim by infiniteTransition.animateFloat(
         initialValue = 0.4f,
@@ -32,7 +32,7 @@ fun SplashScreen(navController: NavController) {
         )
     )
 
-    // Animación puntos suspensivos
+    // animacion puntos suspensivos
     var dotCount by remember { mutableStateOf(0) }
     LaunchedEffect(Unit) {
         while (true) {
@@ -41,7 +41,7 @@ fun SplashScreen(navController: NavController) {
         }
     }
 
-    // Generar constelación
+    // generar constelacion
     LaunchedEffect(Unit) {
         val totalStars = 6
         repeat(totalStars) {
@@ -64,10 +64,10 @@ fun SplashScreen(navController: NavController) {
             .background(Color.Black),
         contentAlignment = Alignment.Center
     ) {
-        // Fondo de background estrellado
+        // fondo de background estrellado
         StarryBackdrop()
 
-        // Constelación generada random
+        // constelacion generada random
         Canvas(modifier = Modifier.fillMaxSize()) {
             val canvasWidth = size.width
             val canvasHeight = size.height
@@ -92,7 +92,7 @@ fun SplashScreen(navController: NavController) {
             }
         }
 
-        // Texto con puntos suspensivos y sombra
+        // texto con puntos suspensivos y sombra
         Box(
             modifier = Modifier
                 .fillMaxSize()

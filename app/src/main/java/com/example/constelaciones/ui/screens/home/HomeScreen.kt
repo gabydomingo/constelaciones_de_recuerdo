@@ -19,10 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.constelaciones.ui.components.BottomNavigationBar
 import com.example.constelaciones.viewmodel.HomeViewModel
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.layout.ContentScale
+import com.example.constelaciones.ui.components.ScaffoldWithBackground
 
 @Composable
 fun HomeScreen(
@@ -33,18 +33,11 @@ fun HomeScreen(
     val imageTitle by viewModel.imageTitle.collectAsState()
     val context = LocalContext.current
 
-    Scaffold(
-        bottomBar = { BottomNavigationBar(navController) }
-    ) { padding ->
+    ScaffoldWithBackground(navController = navController) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color(0xFF16185C), Color(0xFF00021F))
-                    )
-                ),
+                .padding(padding),
             contentAlignment = Alignment.TopCenter
         ) {
             Column(

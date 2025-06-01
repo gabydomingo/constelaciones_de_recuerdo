@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.constelaciones.ui.components.BottomNavigationBar
+import com.example.constelaciones.ui.components.ScaffoldWithBackground
 import com.example.constelaciones.viewmodel.AddMemoryViewModel
 import java.util.*
 
@@ -47,12 +46,12 @@ fun AddMemoryScreen(navController: NavController) {
         imageUri = it
     }
 
-    Scaffold (bottomBar = { BottomNavigationBar(navController) }){ padding ->
+    ScaffoldWithBackground(navController = navController) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .background(Brush.verticalGradient(listOf(Color(0xFF16185C), Color(0xFF00021F))))
+                .padding(padding),
+            contentAlignment = Alignment.TopCenter
         ) {
             Column(
                 modifier = Modifier

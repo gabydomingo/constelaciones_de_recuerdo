@@ -98,18 +98,18 @@ fun ApodDetailScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Texto según idioma
+                // texto segun el idioma
                 val explanationText = if (isSpanish) {
                     translatedExplanation ?: it.explanation
                 } else {
                     it.explanation
                 }
 
-                // Definir límite de caracteres para vista previa
+                // definir limite de caracteres para vista previa
                 val previewLength = 200
                 val showExpandButton = explanationText.length > previewLength
 
-                // Mostrar texto completo o recortado según el estado
+                // mostrar texto completo o recortado
                 val displayText = if (isTextExpanded || !showExpandButton) {
                     explanationText
                 } else {
@@ -123,7 +123,7 @@ fun ApodDetailScreen(
                     lineHeight = 22.sp
                 )
 
-                // Botón de ver mas o menos
+                // boton de ver mas o menos
                 if (showExpandButton) {
                     Spacer(modifier = Modifier.height(12.dp))
 

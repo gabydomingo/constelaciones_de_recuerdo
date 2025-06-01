@@ -1,7 +1,6 @@
 package com.example.constelaciones.data.remote
 
 import com.example.constelaciones.data.model.ApodResponse
-import com.example.constelaciones.data.model.NasaEvent
 import com.example.constelaciones.data.model.NasaImageResponse
 import retrofit2.http.GET
 import retrofit2.http.Query

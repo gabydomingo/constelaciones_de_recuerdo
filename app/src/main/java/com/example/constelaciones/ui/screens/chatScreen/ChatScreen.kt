@@ -1,4 +1,4 @@
-package com.example.constelaciones.ui.screens.chat
+package com.example.constelaciones.ui.screens.chatScreen
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -132,7 +132,7 @@ fun ChatScreen() {
                             userInput = TextFieldValue("")
 
 
-                            //prompt para darle contexto  a la IA y tratar de limitar las respuestas.
+                            //prompt para darle contexto  a la IA y manejarla.
                             scope.launch {
                                 val response = try {
                                     withContext(Dispatchers.IO) {

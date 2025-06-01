@@ -1,7 +1,5 @@
 package com.example.constelaciones.ui.screens.login
 
-import android.app.Activity
-import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -16,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.constelaciones.ui.navigation.BottomNavItem
 import com.example.constelaciones.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.*
 import com.google.android.gms.common.api.ApiException
@@ -37,7 +34,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = and
     }
 
 
-    // Configuro Google incio cecion
+    // configuro Google incio sesion
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
@@ -89,10 +86,11 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = and
                     visualTransformation = PasswordVisualTransformation()
                 )
                 Spacer(modifier = Modifier.height(24.dp))
-                Button(onClick = { /* más adelante */ }, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = { /* usar mas adelante cuando pueda tomar datos de la cuenta */ }, modifier = Modifier.fillMaxWidth()) {
                     Text("Iniciar sesión")
                 }
                 Spacer(modifier = Modifier.height(16.dp))
+                /// unico usable verdaderamente por ahora
                 Button(
                     onClick = {
                         launcher.launch(signInRequest)

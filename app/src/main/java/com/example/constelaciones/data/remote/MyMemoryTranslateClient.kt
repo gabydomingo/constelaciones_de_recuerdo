@@ -6,6 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+//traductor principal, el otro es si falla este.
 object MyMemoryTranslateClient {
     private const val BASE_URL = "https://api.mymemory.translated.net/"
 

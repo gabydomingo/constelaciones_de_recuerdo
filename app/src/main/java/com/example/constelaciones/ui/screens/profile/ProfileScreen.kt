@@ -8,7 +8,6 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -19,15 +18,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.constelaciones.ui.components.BottomNavigationBar
+import com.example.constelaciones.ui.components.ScaffoldWithBackground
 import com.example.constelaciones.viewmodel.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
@@ -46,7 +43,7 @@ fun ProfileScreen(navController: NavController) {
     val snackbarHostState = remember { SnackbarHostState() }
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
 
-    // Cargar datos del usuario al entrar
+    // cargar datos del usuario al entrar (funciona y no funciona)
     scope.launch {
         snackbarHostState.showSnackbar("Perfil guardado correctamente")
     }
@@ -61,18 +58,12 @@ fun ProfileScreen(navController: NavController) {
         model = profileImageUri ?: profileImageUrl ?: ""
     )
 
-    Scaffold(bottomBar = { BottomNavigationBar(navController) },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { padding ->
+    ScaffoldWithBackground(navController = navController) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .background(
-                    Brush.verticalGradient(
-                        listOf(Color(0xFF16185C), Color(0xFF00021F))
-                    )
-                )
+                .padding(padding),
+            contentAlignment = Alignment.TopCenter
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -82,7 +73,7 @@ fun ProfileScreen(navController: NavController) {
             ) {
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // Imagen de perfil
+                // imagen de perfil (funciona y no)
                 Box(
                     modifier = Modifier
                         .size(100.dp)

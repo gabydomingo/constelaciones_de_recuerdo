@@ -74,3 +74,4 @@ fun StarryBackground(starCount: Int = 1000) {
         }
     }
 }
+///cuando implemente firebase agregar la constelacion de recuerdos.
