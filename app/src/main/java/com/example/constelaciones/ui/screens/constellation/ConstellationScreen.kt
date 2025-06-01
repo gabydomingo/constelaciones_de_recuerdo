@@ -33,7 +33,7 @@ fun ConstellationScreen(navController: NavController) {
         ) {
             StarryBackground() // ahora se dibuja sobre el fondo degradado
 
-            // Aquí irán las estrellas del usuario, botones, etc.
+            // este me lo guardo para generar luego.
         }
     }
 }

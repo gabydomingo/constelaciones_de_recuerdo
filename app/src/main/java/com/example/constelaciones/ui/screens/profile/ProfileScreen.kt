@@ -1,5 +1,8 @@
 package com.example.constelaciones.ui.screens.profile
 
+///modificar mas adelante: guarda la img en firebase pero no la muestra en app
+/// tomar info del mail solo parte ddelante del arroba.
+
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult

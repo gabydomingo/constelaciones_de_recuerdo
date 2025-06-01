@@ -11,13 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
-
 import com.example.constelaciones.data.remote.MyMemoryTranslateClient
-
-///
-import com.example.constelaciones.data.remote.TranslateRequest
-
-
 
 class HomeViewModel : ViewModel() {
 
@@ -125,7 +119,6 @@ class HomeViewModel : ViewModel() {
     fun toggleLanguage() {
         _isSpanish.value = !_isSpanish.value
     }
-
 
 
 }

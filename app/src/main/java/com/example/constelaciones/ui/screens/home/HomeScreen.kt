@@ -65,7 +65,7 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Contenedor dinámico
+                // Contenedor dinámico.
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -121,7 +121,7 @@ fun HomeScreen(
                         }
                     }
                 }
-                //// buscar linea de tiempo
+                //// buscadorr
                 Button(
                     onClick = { navController.navigate("timeline") }
                 ) {

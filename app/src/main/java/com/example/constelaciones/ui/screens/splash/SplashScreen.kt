@@ -64,10 +64,10 @@ fun SplashScreen(navController: NavController) {
             .background(Color.Black),
         contentAlignment = Alignment.Center
     ) {
-        // Fondo estrellado
+        // Fondo de background estrellado
         StarryBackdrop()
 
-        // Constelación
+        // Constelación generada random
         Canvas(modifier = Modifier.fillMaxSize()) {
             val canvasWidth = size.width
             val canvasHeight = size.height

@@ -1,6 +1,5 @@
 package com.example.constelaciones.ui.screens.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,13 +21,10 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.constelaciones.viewmodel.HomeViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-
-
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.*
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -127,7 +123,7 @@ fun ApodDetailScreen(
                     lineHeight = 22.sp
                 )
 
-                // Botón para expandir/contraer
+                // Botón de ver mas o menos
                 if (showExpandButton) {
                     Spacer(modifier = Modifier.height(12.dp))
 

@@ -6,6 +6,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.NavController
 
+
+///esto esta aca para evitar romper la armonia del navgraph.kt
 fun NavGraphBuilder.timelineDetailRoute(navController: NavController) {
     composable(
         "eventoDetalle/{title}/{date}/{imageUrlEncoded}/{descriptionEncoded}",

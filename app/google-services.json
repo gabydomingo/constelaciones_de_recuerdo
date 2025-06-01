@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "88400132328",
+    "project_id": "constelacionesderecuerdo",
+    "storage_bucket": "constelacionesderecuerdo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:88400132328:android:6568a242e2181c13f6f15d",
+        "android_client_info": {
+          "package_name": "com.example.constelaciones"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "88400132328-kivvaqcrj6ogfpf234gu5b9mqu5h3q6j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.constelaciones",
+            "certificate_hash": "2101bf5dbf988b73a8f39c30e7800d81393918d6"
+          }
+        },
+        {
+          "client_id": "88400132328-o91lasbqh1unlt8rblcsoc454ee67fuf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.constelaciones",
+            "certificate_hash": "7c2c0102c78455fea67ac7f385363aaf2b2e7a93"
+          }
+        },
+        {
+          "client_id": "88400132328-ok5r1878noh37hcttabmidfth55copri.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLeilIeyz9mzc6m193AbnhEcvnOyW3Uiw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "88400132328-ok5r1878noh37hcttabmidfth55copri.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

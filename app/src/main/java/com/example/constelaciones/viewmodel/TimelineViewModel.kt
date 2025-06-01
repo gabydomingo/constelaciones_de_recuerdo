@@ -94,7 +94,7 @@ class TimelineViewModel : ViewModel() {
     }
 
     private suspend fun translateWithFallback(original: String): String {
-        // Evitar traducir el mismo texto más de una vez
+        // Evitar traducir el mismo texto más de una vez asi ahorro token.
         _translatedDescriptions[original]?.let { return it }
 
         try {

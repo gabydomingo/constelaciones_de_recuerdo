@@ -41,8 +41,6 @@ fun NavGraph(navController: NavHostController) {
         composable("timeline") {
             TimelineScreen(navController)
         }
-
-
         timelineDetailRoute(navController)
     }
 }
