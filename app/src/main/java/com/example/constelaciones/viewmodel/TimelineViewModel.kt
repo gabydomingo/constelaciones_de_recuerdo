@@ -22,6 +22,9 @@ class TimelineViewModel : ViewModel() {
     private val _searchResults = MutableStateFlow<List<NasaEvent>>(emptyList())
     val searchResults = _searchResults.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     private val _translatedDescriptions = mutableMapOf<String, String>()
 
     init {
@@ -67,6 +70,8 @@ class TimelineViewModel : ViewModel() {
 
     private fun searchEventsFromApi(query: String) {
         viewModelScope.launch {
+            _isLoading.value = true
+
             try {
                 val response = RetrofitClient.nasaEventApi.searchEvents(query = query)
                 val items = response.collection.items
@@ -79,7 +84,7 @@ class TimelineViewModel : ViewModel() {
                         NasaEvent(
                             title = data.title,
                             date = data.date_created.substring(0, 10),
-                            description = translateWithFallback(data.description),
+                            description = data.description, // ya no se traduce acá
                             imageUrl = image
                         )
                     } else null
@@ -89,12 +94,14 @@ class TimelineViewModel : ViewModel() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 _searchResults.value = emptyList()
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
+    // Función de traducción mantenida para posibles usos futuros (ya no usada aquí)
     private suspend fun translateWithFallback(original: String): String {
-        // Evitar traducir el mismo texto más de una vez asi ahorro token.
         _translatedDescriptions[original]?.let { return it }
 
         try {
@@ -117,7 +124,6 @@ class TimelineViewModel : ViewModel() {
             Log.e("TRANSLATE", "Error en MyMemory: ${e.message}")
         }
 
-        // Fallback con LibreTranslate
         return try {
             val libreResponse = LibreTranslateClient.api.translate(
                 TranslateRequest(q = original)
