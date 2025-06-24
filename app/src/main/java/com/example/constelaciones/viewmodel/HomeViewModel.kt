@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.constelaciones.data.model.ApodResponse
 import com.example.constelaciones.data.remote.RetrofitClient
+import com.example.constelaciones.util.TranslatorUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
-import com.example.constelaciones.data.remote.MyMemoryTranslateClient
 
 class HomeViewModel : ViewModel() {
 
@@ -23,10 +23,17 @@ class HomeViewModel : ViewModel() {
     private val _translatedExplanation = MutableStateFlow<String?>(null)
     val translatedExplanation = _translatedExplanation.asStateFlow()
 
+    private val _isSpanish = MutableStateFlow(true)
+    val isSpanish = _isSpanish.asStateFlow()
+
     private var hasFetched = false // Para evitar llamadas múltiples
 
     init {
         fetchTodayImageIfNeeded()
+    }
+
+    fun toggleLanguage() {
+        _isSpanish.value = !_isSpanish.value
     }
 
     fun fetchTodayImageIfNeeded() {
@@ -73,51 +80,12 @@ class HomeViewModel : ViewModel() {
 
     private fun translateExplanation(originalText: String) {
         viewModelScope.launch {
-            try {
-                Log.d("TRANSLATE_INFO", "Iniciando traducción con MyMemory...")
-                Log.d("TRANSLATE_TEXT", "Texto a traducir (primeros 100 chars): ${originalText.take(100)}...")
-
-
-                val textToTranslate = originalText
-
-
-                val response = MyMemoryTranslateClient.api.translate(
-                    text = textToTranslate,
-                    langPair = "en|es",
-                    email = "constelaciones@example.com"
-                )
-
-                Log.d("TRANSLATE_RESPONSE", "Status: ${response.responseStatus}")
-
-                if (response.responseStatus == 200) {
-                    _translatedExplanation.value = response.responseData.translatedText
-                    Log.d("TRANSLATE_SUCCESS", "Traducción exitosa: ${response.responseData.translatedText.take(50)}...")
-                } else {
-                    Log.e("TRANSLATE_ERROR", "Error en respuesta: ${response.responseStatus}")
-                    _translatedExplanation.value = originalText
-                }
-
-            } catch (e: retrofit2.HttpException) {
-                val errorBody = e.response()?.errorBody()?.string()
-                Log.e("TRANSLATE_ERROR", "Error HTTP: ${e.code()} - ${e.message()}")
-                Log.e("TRANSLATE_ERROR", "Error body: $errorBody")
-                _translatedExplanation.value = originalText
-            } catch (e: Exception) {
-                Log.e("TRANSLATE_ERROR", "Error general al traducir: ${e.message}", e)
-                _translatedExplanation.value = originalText
-            }
-
-
+            // Llamada unificada a TranslatorUtil
+            val translated = TranslatorUtil.translateText(
+                originalText,
+                email = "constelaciones@example.com"
+            )
+            _translatedExplanation.value = translated
         }
-
     }
-
-    private val _isSpanish = MutableStateFlow(true)
-    val isSpanish = _isSpanish.asStateFlow()
-
-    fun toggleLanguage() {
-        _isSpanish.value = !_isSpanish.value
-    }
-
-
 }

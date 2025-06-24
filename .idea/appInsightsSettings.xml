@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.constelaciones" />
+                  <option name="mobileSdkAppId" value="1:88400132328:android:6568a242e2181c13f6f15d" />
+                  <option name="projectId" value="constelacionesderecuerdo" />
+                  <option name="projectNumber" value="88400132328" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

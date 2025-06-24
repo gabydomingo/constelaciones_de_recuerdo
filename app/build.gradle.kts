@@ -2,8 +2,14 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("kapt")
 
     id("com.google.gms.google-services")
+
+    //id("com.google.devtools.ksp") version "1.9.22-1.0.17"
+
+    //id("kotlin-kapt")
+
 
 
 }
@@ -45,6 +51,9 @@ android {
 }
 
 dependencies {
+    //kapt("androidx.room:room-compiler:2.7.1")
+
+    kapt("androidx.room:room-compiler:2.7.1")
 
     implementation("androidx.compose.material:material-icons-extended")
 
@@ -84,6 +93,17 @@ dependencies {
     implementation(libs.firebase.storage.ktx)
     implementation(libs.generativeai)
     implementation(libs.common)
+    implementation(libs.androidx.room.common.jvm)
+    implementation(libs.androidx.room.runtime.android)
+    implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.compiler) {
+        exclude(group = "com.intellij", module = "annotations")
+    }
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.migration)
+    implementation(libs.androidx.room.runtime){
+        exclude(group = "com.intellij", module = "annotations")
+    }
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -93,8 +113,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
+
+
+    //implementation("androidx.room:room-runtime:2.5.2")
+   // implementation("androidx.room:room-ktx:2.5.2")
+
 }
-
-
 
 
