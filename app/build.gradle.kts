@@ -6,12 +6,6 @@ plugins {
 
     id("com.google.gms.google-services")
 
-    //id("com.google.devtools.ksp") version "1.9.22-1.0.17"
-
-    //id("kotlin-kapt")
-
-
-
 }
 
 
@@ -51,6 +45,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.firebase.firestore.ktx)
     //kapt("androidx.room:room-compiler:2.7.1")
 
     kapt("androidx.room:room-compiler:2.7.1")
@@ -101,7 +96,7 @@ dependencies {
     }
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.migration)
-    implementation(libs.androidx.room.runtime){
+    implementation(libs.androidx.room.runtime) {
         exclude(group = "com.intellij", module = "annotations")
     }
     testImplementation(libs.junit)
@@ -112,12 +107,16 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+
+    //implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
+
+    //implementation("com.google.firebase:firebase-firestore-ktx:24.11.0")
 
 
     //implementation("androidx.room:room-runtime:2.5.2")
-   // implementation("androidx.room:room-ktx:2.5.2")
+    // implementation("androidx.room:room-ktx:2.5.2")
 
 }
-
 

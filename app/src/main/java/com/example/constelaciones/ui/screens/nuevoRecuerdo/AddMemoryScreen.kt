@@ -7,11 +7,14 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -32,7 +35,6 @@ import java.util.*
 
 @Composable
 fun AddMemoryScreen(navController: NavController) {
-
     val context = LocalContext.current
     val viewModel: AddMemoryViewModel = viewModel()
 
@@ -51,29 +53,61 @@ fun AddMemoryScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentAlignment = Alignment.TopCenter
+            contentAlignment = Alignment.Center
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color(0xFF1E1B4B), Color(0xFF2E1065))
+                        )
+                    )
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Text(
+                    text = "Nuevo Recuerdo",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.White
+                )
+
                 Spacer(Modifier.height(16.dp))
 
                 Box(
                     modifier = Modifier
-                        .size(140.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .clickable { imageLauncher.launch("image/*") },
+                        .size(160.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .clickable { imageLauncher.launch("image/*") }
+                        .border(2.dp, Color(0xFF7C3AED), RoundedCornerShape(20.dp))
+                        .padding(4.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     if (imageUri != null) {
-                        Image(
-                            painter = rememberAsyncImagePainter(imageUri),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize()
-                        )
+                        Box {
+                            Image(
+                                painter = rememberAsyncImagePainter(imageUri),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(16.dp))
+                            )
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Editar imagen",
+                                tint = Color.White,
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(6.dp)
+                                    .size(24.dp)
+                                    .background(
+                                        color = Color.Black.copy(alpha = 0.4f),
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                                    .padding(4.dp)
+                            )
+                        }
                     } else {
                         Icon(
                             Icons.Default.Image,
@@ -84,35 +118,17 @@ fun AddMemoryScreen(navController: NavController) {
                     }
                 }
 
-                Spacer(Modifier.height(20.dp))
-
-                StyledTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = "Título del recuerdo"
-                )
-
+                Spacer(Modifier.height(16.dp))
+                StyledTextField(title, { title = it }, "Título del recuerdo")
                 Spacer(Modifier.height(12.dp))
-
-                DatePickerField(
-                    selectedDate = selectedDate,
-                    onDateSelected = { selectedDate = it }
-                )
-
+                DatePickerField(selectedDate, { selectedDate = it })
                 Spacer(Modifier.height(12.dp))
-
-                StyledTextField(
-                    value = location,
-                    onValueChange = { location = it },
-                    label = "Ubicación (opcional)"
-                )
-
+                StyledTextField(location, { location = it }, "Ubicación (opcional)")
                 Spacer(Modifier.height(12.dp))
-
                 StyledTextField(
-                    value = description.text,
-                    onValueChange = { description = TextFieldValue(it) },
-                    label = "Descripción (opcional)",
+                    description.text,
+                    { description = TextFieldValue(it) },
+                    "Descripción (opcional)",
                     singleLine = false
                 )
 
@@ -142,7 +158,8 @@ fun AddMemoryScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4B48B6))
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7C3AED))
                 ) {
                     Text("Confirmar", color = Color.White)
                 }
