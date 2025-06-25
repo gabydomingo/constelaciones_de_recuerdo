@@ -7,5 +7,7 @@ data class MemoryModel(
     var titulo: String = "",
     var descripcion: String = "",
     var ubicacion: String = "",
-    var imageUrl: String? = null
+    var imageUrl: String? = null,
+    var isFavorito: Boolean = false
+
 )

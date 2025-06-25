@@ -1,30 +1,24 @@
 package com.example.constelaciones.ui.screens.constellation
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import com.example.constelaciones.data.model.MemoryModel
 import com.example.constelaciones.ui.components.BottomNavigationBar
 import com.example.constelaciones.ui.components.EstrellasBackground
+import com.example.constelaciones.ui.components.MemoryDetailCard
 import com.example.constelaciones.viewmodel.ConstellationViewModel
 import kotlinx.coroutines.delay
 import kotlin.random.Random
@@ -57,53 +51,11 @@ fun ConstellationScreen(navController: NavController) {
             }
 
             selectedMemory?.let { memory ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Color(0xFF2D2A6A).copy(alpha = 0.95f))
-                        .padding(16.dp)
-                        .align(Alignment.TopCenter)
-                ) {
-                    Column {
-                        Box(
-                            modifier = Modifier
-                                .height(150.dp)
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Color.Gray)
-                        ) {
-                            Image(
-                                painter = rememberAsyncImagePainter(model = memory.imageUrl),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-
-                        Spacer(Modifier.height(8.dp))
-
-                        Text(
-                            memory.titulo,
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = Color.White
-                        )
-                        Text("${memory.fecha} - ${memory.ubicacion}", color = Color.LightGray)
-
-                        Spacer(Modifier.height(8.dp))
-                        Text(memory.descripcion, color = Color.White)
-
-                        Spacer(Modifier.height(8.dp))
-
-                        IconButton(
-                            onClick = { selectedMemory = null },
-                            modifier = Modifier.align(Alignment.End)
-                        ) {
-                            Icon(Icons.Default.Close, contentDescription = "Cerrar", tint = Color.White)
-                        }
-                    }
-                }
+                MemoryDetailCard(
+                    memory = memory,
+                    onDismiss = { selectedMemory = null },
+                    onToggleFavorito = { viewModel.toggleFavorito(memory) }
+                )
             }
         }
     }
@@ -123,7 +75,7 @@ fun DrawConstellation(memories: List<MemoryModel>, onMemoryClick: (MemoryModel) 
 
     LaunchedEffect(memories) {
         visibleMemories.clear()
-        memories.forEachIndexed { i, memory ->
+        memories.forEach { memory ->
             delay(100L) // delay entre estrellas
             visibleMemories.add(memory)
         }
@@ -149,8 +101,7 @@ fun DrawConstellation(memories: List<MemoryModel>, onMemoryClick: (MemoryModel) 
             Offset(it.x * size.width, it.y * size.height)
         }
 
-        // Dibujar líneas con animación simple de progresión
-        coords.zipWithNext().forEachIndexed { index, (a, b) ->
+        coords.zipWithNext().forEach { (a, b) ->
             drawLine(
                 color = Color.White.copy(alpha = 0.2f),
                 start = a,
@@ -159,7 +110,6 @@ fun DrawConstellation(memories: List<MemoryModel>, onMemoryClick: (MemoryModel) 
             )
         }
 
-        // Dibujar puntos visibles
         visibleMemories.forEach { memory ->
             val pos = positions[memory] ?: return@forEach
             val center = Offset(pos.x * size.width, pos.y * size.height)
@@ -172,4 +122,3 @@ fun DrawConstellation(memories: List<MemoryModel>, onMemoryClick: (MemoryModel) 
         }
     }
 }
-

@@ -30,16 +30,16 @@ class ConstellationViewModel : ViewModel() {
                 snapshot.documents.forEach { doc ->
                     val memory = doc.toObject(MemoryModel::class.java)
                     if (memory != null) {
+                        val idDoc = doc.id
+
+                        // Verifica si falta imageUrl
                         if (memory.imageUrl.isNullOrBlank()) {
                             viewModelScope.launch {
                                 val fetchedUrl = NasaRepository.fetchNasaImage(memory.fecha)
                                 if (fetchedUrl != null) {
-                                    // Actualiza en Firestore
                                     firestore.collection("memorias")
-                                        .document(doc.id)
+                                        .document(idDoc)
                                         .update("imageUrl", fetchedUrl)
-
-                                    // Actualiza en memoria
                                     memory.imageUrl = fetchedUrl
                                 }
                                 memoryList.add(memory)
@@ -52,5 +52,31 @@ class ConstellationViewModel : ViewModel() {
                     }
                 }
             }
+    }
+
+    fun toggleFavorito(memory: MemoryModel) {
+        val nuevoValor = !memory.isFavorito
+        memory.isFavorito = nuevoValor
+
+        viewModelScope.launch {
+            firestore.collection("memorias")
+                .whereEqualTo("idUsuario", userId)
+                .whereEqualTo("titulo", memory.titulo)
+                .whereEqualTo("fecha", memory.fecha)
+                .get()
+                .addOnSuccessListener { snapshot ->
+                    snapshot.documents.firstOrNull()?.id?.let { docId ->
+                        firestore.collection("memorias")
+                            .document(docId)
+                            .update("isFavorito", nuevoValor)
+                    }
+                }
+        }
+
+        // Actualizamos la lista local
+        val nuevaLista = _memories.value.map {
+            if (it.fecha == memory.fecha && it.titulo == memory.titulo) memory else it
+        }
+        _memories.value = nuevaLista
     }
 }
