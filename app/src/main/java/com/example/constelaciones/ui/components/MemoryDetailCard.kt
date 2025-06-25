@@ -18,8 +18,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.constelaciones.data.model.MemoryModel
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.StarOutline
+import androidx.compose.foundation.rememberScrollState
 
 
 @Composable
@@ -28,14 +29,22 @@ fun MemoryDetailCard(
     onDismiss: () -> Unit,
     onToggleFavorito: () -> Unit
 ) {
+    val scrollState = rememberScrollState()
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
+            .wrapContentHeight()
+            .heightIn(max = 500.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(Color(0xFF2D2A6A).copy(alpha = 0.95f))
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(scrollState)
+        ) {
+            // Imagen y header
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -49,17 +58,19 @@ fun MemoryDetailCard(
                     modifier = Modifier.fillMaxSize()
                 )
 
-                // Texto descriptivo
-                Text(
-                    text = "Esto sucedió el día de tu recuerdo.",
-                    color = Color.White,
-                    style = MaterialTheme.typography.bodySmall,
+                IconToggleButton(
+                    checked = memory.isFavorito,
+                    onCheckedChange = { onToggleFavorito() },
                     modifier = Modifier
-                        .align(Alignment.BottomStart)
+                        .align(Alignment.TopStart)
                         .padding(8.dp)
-                )
-
-                // Botón cerrar
+                ) {
+                    Icon(
+                        imageVector = if (memory.isFavorito) Icons.Default.Star else Icons.Default.StarOutline,
+                        contentDescription = "Favorito",
+                        tint = if (memory.isFavorito) Color.Yellow else Color.White
+                    )
+                }
                 IconButton(
                     onClick = onDismiss,
                     modifier = Modifier
@@ -72,46 +83,29 @@ fun MemoryDetailCard(
                         tint = Color.White
                     )
                 }
-
-                // Estrella de favorito
-                IconToggleButton(
-                    checked = memory.isFavorito == true,
-                    onCheckedChange = { onToggleFavorito() },
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(8.dp)
-                ) {
-                    Icon(
-                        imageVector = if (memory.isFavorito == true)
-                            Icons.Default.Star else Icons.Default.StarOutline,
-                        contentDescription = "Favorito",
-                        tint = if (memory.isFavorito == true) Color.Yellow else Color.White
-                    )
-                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            // Contenido de texto
+            Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                 Text(
                     text = memory.titulo,
                     style = MaterialTheme.typography.headlineSmall,
                     color = Color.White
                 )
-
                 Text(
-                    text = "${memory.fecha} - ${memory.ubicacion}",
+                    text = "${memory.fecha} – ${memory.ubicacion}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.LightGray
                 )
-
                 Spacer(modifier = Modifier.height(12.dp))
-
                 Text(
                     text = memory.descripcion,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White
                 )
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
