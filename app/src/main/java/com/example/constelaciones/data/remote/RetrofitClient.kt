@@ -7,6 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitClient {
     private const val BASE_URL = "https://api.nasa.gov/"
     private const val BASE_SEARCH_URL = "https://images-api.nasa.gov/"
+    private const val API_KEY = "tCUSGkgLZCptWme1rPDuoTUU0JQyV3hLRn6uoBLY"
 
 
     // Cliente para APOD
@@ -36,6 +37,8 @@ object RetrofitClient {
             .build()
             .create(NasaEventApi::class.java)
     }
+
+
 
 }
 

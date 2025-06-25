@@ -1,32 +1,32 @@
 package com.example.constelaciones.data.model
 
 data class NasaImageResponse(
-    val collection: Collection
+    val collection: NasaCollection
 )
 
 data class NasaLibraryResponse(
-    val collection: Collection
+    val collection: NasaCollection
 )
 
-data class Collection(
-    val items: List<Item>
+data class NasaCollection(
+    val items: List<NasaItem>
 )
 
-data class Item(
-    val data: List<Data>,
-    val links: List<Link>
+data class NasaItem(
+    val data: List<NasaData>,
+    val links: List<NasaLink>
 )
 
-data class Data(
+data class NasaData(
     val title: String,
     val date_created: String,
-    val description: String
+    val description: String,
+    val media_type: String // ✅ Este es el campo que te faltaba
 )
 
-data class Link(
+data class NasaLink(
     val href: String
 )
-
 
 data class ApodResponse(
     val date: String,
@@ -48,6 +48,3 @@ data class NasaEvent(
     val description: String,
     val imageUrl: String
 )
-
-
-
