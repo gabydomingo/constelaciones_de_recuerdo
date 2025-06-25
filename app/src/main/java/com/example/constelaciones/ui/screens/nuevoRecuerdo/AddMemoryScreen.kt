@@ -11,7 +11,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
@@ -23,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -38,136 +41,164 @@ fun AddMemoryScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: AddMemoryViewModel = viewModel()
 
+    // Estados de los campos
     var title by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
     var description by remember { mutableStateOf(TextFieldValue("")) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
+    // Para abrir galería
     val imageLauncher = rememberLauncherForActivityResult(GetContent()) {
         imageUri = it
     }
+
+    // Scroll interno
+    val scrollState = rememberScrollState()
 
     ScaffoldWithBackground(navController = navController) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(padding)
+                .padding(16.dp),   // Margen general
             contentAlignment = Alignment.Center
         ) {
-            Column(
+            // Fondo redondeado
+            Box(
                 modifier = Modifier
-                    .padding(24.dp)
+                    .fillMaxSize()
                     .clip(RoundedCornerShape(24.dp))
                     .background(
                         Brush.verticalGradient(
                             listOf(Color(0xFF1E1B4B), Color(0xFF2E1065))
                         )
                     )
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Nuevo Recuerdo",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = Color.White
-                )
-
-                Spacer(Modifier.height(16.dp))
-
-                Box(
+                Column(
                     modifier = Modifier
-                        .size(160.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .clickable { imageLauncher.launch("image/*") }
-                        .border(2.dp, Color(0xFF7C3AED), RoundedCornerShape(20.dp))
-                        .padding(4.dp),
-                    contentAlignment = Alignment.Center
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (imageUri != null) {
-                        Box {
-                            Image(
-                                painter = rememberAsyncImagePainter(imageUri),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(16.dp))
-                            )
+                    // Título
+                    Text(
+                        text = "Nuevo Recuerdo",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = Color.White
+                    )
+
+                    Spacer(Modifier.height(16.dp))
+
+                    // Selector de imagen
+                    Box(
+                        modifier = Modifier
+                            .size(160.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .clickable { imageLauncher.launch("image/*") }
+                            .border(2.dp, Color(0xFF7C3AED), RoundedCornerShape(20.dp))
+                            .padding(4.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (imageUri != null) {
+                            Box {
+                                Image(
+                                    painter = rememberAsyncImagePainter(imageUri),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(16.dp))
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "Editar imagen",
+                                    tint = Color.White,
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .padding(6.dp)
+                                        .size(24.dp)
+                                        .background(
+                                            color = Color.Black.copy(alpha = 0.4f),
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
+                                        .padding(4.dp)
+                                )
+                            }
+                        } else {
                             Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "Editar imagen",
-                                tint = Color.White,
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .padding(6.dp)
-                                    .size(24.dp)
-                                    .background(
-                                        color = Color.Black.copy(alpha = 0.4f),
-                                        shape = RoundedCornerShape(12.dp)
-                                    )
-                                    .padding(4.dp)
+                                Icons.Default.Image,
+                                contentDescription = "Seleccionar imagen",
+                                tint = Color.White.copy(alpha = 0.5f),
+                                modifier = Modifier.size(48.dp)
                             )
                         }
-                    } else {
-                        Icon(
-                            Icons.Default.Image,
-                            contentDescription = null,
-                            tint = Color.White.copy(alpha = 0.5f),
-                            modifier = Modifier.size(48.dp)
+                    }
+
+                    Spacer(Modifier.height(16.dp))
+
+                    // --- Aquí empieza la zona scrollable ---
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .verticalScroll(scrollState),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        StyledTextField(title, { title = it }, "Título del recuerdo")
+                        Spacer(Modifier.height(12.dp))
+                        DatePickerField(selectedDate) { selectedDate = it }
+                        Spacer(Modifier.height(12.dp))
+                        StyledTextField(location, { location = it }, "Ubicación (opcional)")
+                        Spacer(Modifier.height(12.dp))
+                        StyledTextField(
+                            value = description.text,
+                            onValueChange = { description = TextFieldValue(it) },
+                            label = "Descripción (opcional)",
+                            singleLine = false
                         )
                     }
-                }
+                    // --- Fin de la zona scrollable ---
 
-                Spacer(Modifier.height(16.dp))
-                StyledTextField(title, { title = it }, "Título del recuerdo")
-                Spacer(Modifier.height(12.dp))
-                DatePickerField(selectedDate, { selectedDate = it })
-                Spacer(Modifier.height(12.dp))
-                StyledTextField(location, { location = it }, "Ubicación (opcional)")
-                Spacer(Modifier.height(12.dp))
-                StyledTextField(
-                    description.text,
-                    { description = TextFieldValue(it) },
-                    "Descripción (opcional)",
-                    singleLine = false
-                )
+                    Spacer(Modifier.height(16.dp))
 
-                Spacer(Modifier.height(24.dp))
-
-                Button(
-                    onClick = {
-                        if (title.isBlank() || selectedDate.isBlank()) {
-                            Toast.makeText(context, "Faltan campos obligatorios", Toast.LENGTH_SHORT).show()
-                        } else {
-                            viewModel.saveMemory(
-                                title = title,
-                                date = selectedDate,
-                                location = location,
-                                description = description.text,
-                                imageUri = imageUri,
-                                onSuccess = {
-                                    Toast.makeText(context, "Recuerdo guardado", Toast.LENGTH_SHORT).show()
-                                    navController.popBackStack()
-                                },
-                                onError = {
-                                    Toast.makeText(context, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
-                                }
-                            )
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7C3AED))
-                ) {
-                    Text("Confirmar", color = Color.White)
+                    // Botón fijo al pie del fondo
+                    Button(
+                        onClick = {
+                            if (title.isBlank() || selectedDate.isBlank()) {
+                                Toast.makeText(context, "Faltan campos obligatorios", Toast.LENGTH_SHORT).show()
+                            } else {
+                                viewModel.saveMemory(
+                                    title = title,
+                                    date = selectedDate,
+                                    location = location,
+                                    description = description.text,
+                                    imageUri = imageUri,
+                                    onSuccess = {
+                                        Toast.makeText(context, "Recuerdo guardado", Toast.LENGTH_SHORT).show()
+                                        navController.popBackStack()
+                                    },
+                                    onError = {
+                                        Toast.makeText(context, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                                    }
+                                )
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7C3AED))
+                    ) {
+                        Text("Confirmar", color = Color.White)
+                    }
                 }
             }
         }
     }
 }
 
+// Tus helpers quedan tal cual
 @Composable
 fun StyledTextField(
     value: String,

@@ -27,8 +27,11 @@ import kotlin.random.Random
 fun ConstellationScreen(navController: NavController) {
     val viewModel: ConstellationViewModel = viewModel()
     val memories by viewModel.memories.collectAsState()
+    val positions by viewModel.positions.collectAsState()
+
     var selectedMemory by remember { mutableStateOf<MemoryModel?>(null) }
 
+    // Cargamos memorias y posiciones al entrar
     LaunchedEffect(Unit) {
         viewModel.loadMemories()
     }
@@ -39,15 +42,17 @@ fun ConstellationScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(padding)
                 .background(
-                    Brush.verticalGradient(
-                        listOf(Color(0xFF16185C), Color(0xFF00021F))
-                    )
+                    Brush.verticalGradient(listOf(Color(0xFF16185C), Color(0xFF00021F)))
                 )
         ) {
             EstrellasBackground(modifier = Modifier.matchParentSize())
 
             if (memories.isNotEmpty()) {
-                DrawConstellation(memories) { selectedMemory = it }
+                DrawConstellation(
+                    memories = memories,
+                    positions = positions,
+                    onMemoryClick = { selectedMemory = it }
+                )
             }
 
             selectedMemory?.let { memory ->
@@ -62,21 +67,19 @@ fun ConstellationScreen(navController: NavController) {
 }
 
 @Composable
-fun DrawConstellation(memories: List<MemoryModel>, onMemoryClick: (MemoryModel) -> Unit) {
-    val screenSize = remember { mutableStateOf(Pair(1f, 1f)) }
-
-    val positions = remember(memories) {
-        memories.associateWith {
-            Offset(Random.nextFloat(), Random.nextFloat())
-        }
-    }
-
+fun DrawConstellation(
+    memories: List<MemoryModel>,
+    positions: Map<String, Offset>,
+    onMemoryClick: (MemoryModel) -> Unit
+) {
+    // guardamos el tamaño de pantalla para escalar
+    var screenSize by remember { mutableStateOf(Pair(1f, 1f)) }
     val visibleMemories = remember { mutableStateListOf<MemoryModel>() }
 
     LaunchedEffect(memories) {
         visibleMemories.clear()
         memories.forEach { memory ->
-            delay(100L) // delay entre estrellas
+            delay(100L)
             visibleMemories.add(memory)
         }
     }
@@ -85,23 +88,30 @@ fun DrawConstellation(memories: List<MemoryModel>, onMemoryClick: (MemoryModel) 
         modifier = Modifier
             .fillMaxSize()
             .pointerInput(Unit) {
-                detectTapGestures { offset ->
-                    positions.forEach { (memory, pos) ->
-                        val center = Offset(pos.x * screenSize.value.first, pos.y * screenSize.value.second)
-                        if ((offset - center).getDistance() < 20f) {
-                            onMemoryClick(memory)
+                detectTapGestures { tapOffset ->
+                    visibleMemories.forEach { memory ->
+                        positions[memory.id]?.let { normPos ->
+                            val realPos = Offset(normPos.x * screenSize.first, normPos.y * screenSize.second)
+                            if ((tapOffset - realPos).getDistance() < 20f) {
+                                onMemoryClick(memory)
+                            }
                         }
                     }
                 }
             }
     ) {
-        screenSize.value = size.width to size.height
+        // actualizamos el tamaño de pantalla
+        screenSize = size.width to size.height
 
-        val coords = visibleMemories.mapNotNull { positions[it] }.map {
-            Offset(it.x * size.width, it.y * size.height)
+        // convertimos posiciones normalizadas a reales
+        val coords = visibleMemories.mapNotNull { memory ->
+            positions[memory.id]?.let { norm ->
+                Offset(norm.x * size.width, norm.y * size.height)
+            }
         }
 
-        coords.zipWithNext().forEach { (a, b) ->
+        // dibujamos líneas
+        coords.zipWithNext { a, b ->
             drawLine(
                 color = Color.White.copy(alpha = 0.2f),
                 start = a,
@@ -110,15 +120,16 @@ fun DrawConstellation(memories: List<MemoryModel>, onMemoryClick: (MemoryModel) 
             )
         }
 
+        // dibujamos las estrellas
         visibleMemories.forEach { memory ->
-            val pos = positions[memory] ?: return@forEach
-            val center = Offset(pos.x * size.width, pos.y * size.height)
-
-            drawCircle(
-                color = Color.Yellow.copy(alpha = 0.8f),
-                radius = 6.dp.toPx(),
-                center = center
-            )
+            positions[memory.id]?.let { norm ->
+                drawCircle(
+                    color = Color.Yellow.copy(alpha = 0.8f),
+                    radius = 6.dp.toPx(),
+                    center = Offset(norm.x * size.width, norm.y * size.height)
+                )
+            }
         }
     }
 }
+

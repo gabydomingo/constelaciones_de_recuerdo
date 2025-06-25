@@ -1,13 +1,15 @@
 package com.example.constelaciones.data.model
 
+import com.google.firebase.database.PropertyName
+
 data class MemoryModel(
-    var idUsuario: String? = null,
-    var fechaCreacion: String? = null,
-    var fecha: String = "",
+    var id: String = "",
+    val idUsuario: String = "",
     var titulo: String = "",
     var descripcion: String = "",
+    var fecha: String = "",
     var ubicacion: String = "",
-    var imageUrl: String? = null,
+    var imageUrl: String = "",
+    var fechaCreacion: String = "",
     var isFavorito: Boolean = false
-
 )

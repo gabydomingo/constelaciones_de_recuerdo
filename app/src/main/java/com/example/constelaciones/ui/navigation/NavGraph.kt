@@ -14,7 +14,7 @@ import com.example.constelaciones.ui.screens.nuevoRecuerdo.AddMemoryScreen
 import com.example.constelaciones.ui.screens.timeline.TimelineScreen
 import com.example.constelaciones.ui.screens.timeline.timelineDetailRoute
 import com.example.constelaciones.ui.screens.chatScreen.ChatScreen
-import com.example.constelaciones.ui.screens.friends.friendScreen
+import com.example.constelaciones.ui.screens.favs.FavoriteScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -49,8 +49,9 @@ fun NavGraph(navController: NavHostController) {
         composable("chat") {
             ChatScreen()
         }
-        composable(BottomNavItem.Friends.route) {
-            friendScreen(navController)
+        composable(BottomNavItem.Favorite.route) {
+            FavoriteScreen(navController)
         }
+
     }
 }

@@ -12,7 +12,7 @@ fun BottomNavigationBar(navController: NavController) {
         BottomNavItem.Home,
         BottomNavItem.Constellation,
         BottomNavItem.Add,
-        BottomNavItem.Friends,
+        BottomNavItem.Favorite,
         BottomNavItem.Profile
     )
 
