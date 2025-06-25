@@ -24,7 +24,9 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.constelaciones.data.model.MemoryModel
 import com.example.constelaciones.ui.components.BottomNavigationBar
+import com.example.constelaciones.ui.components.EstrellasBackground
 import com.example.constelaciones.viewmodel.ConstellationViewModel
+import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 @Composable
@@ -48,6 +50,8 @@ fun ConstellationScreen(navController: NavController) {
                     )
                 )
         ) {
+            EstrellasBackground(modifier = Modifier.matchParentSize())
+
             if (memories.isNotEmpty()) {
                 DrawConstellation(memories) { selectedMemory = it }
             }
@@ -115,6 +119,16 @@ fun DrawConstellation(memories: List<MemoryModel>, onMemoryClick: (MemoryModel) 
         }
     }
 
+    val visibleMemories = remember { mutableStateListOf<MemoryModel>() }
+
+    LaunchedEffect(memories) {
+        visibleMemories.clear()
+        memories.forEachIndexed { i, memory ->
+            delay(100L) // delay entre estrellas
+            visibleMemories.add(memory)
+        }
+    }
+
     Canvas(
         modifier = Modifier
             .fillMaxSize()
@@ -131,20 +145,31 @@ fun DrawConstellation(memories: List<MemoryModel>, onMemoryClick: (MemoryModel) 
     ) {
         screenSize.value = size.width to size.height
 
-        val coords = positions.values.map {
+        val coords = visibleMemories.mapNotNull { positions[it] }.map {
             Offset(it.x * size.width, it.y * size.height)
         }
 
-        coords.zipWithNext().forEach { (a, b) ->
-            drawLine(Color.White.copy(alpha = 0.2f), a, b, strokeWidth = 1.5.dp.toPx())
+        // Dibujar líneas con animación simple de progresión
+        coords.zipWithNext().forEachIndexed { index, (a, b) ->
+            drawLine(
+                color = Color.White.copy(alpha = 0.2f),
+                start = a,
+                end = b,
+                strokeWidth = 1.5.dp.toPx()
+            )
         }
 
-        positions.forEach { (_, pos) ->
+        // Dibujar puntos visibles
+        visibleMemories.forEach { memory ->
+            val pos = positions[memory] ?: return@forEach
+            val center = Offset(pos.x * size.width, pos.y * size.height)
+
             drawCircle(
                 color = Color.Yellow.copy(alpha = 0.8f),
                 radius = 6.dp.toPx(),
-                center = Offset(pos.x * size.width, pos.y * size.height)
+                center = center
             )
         }
     }
 }
+

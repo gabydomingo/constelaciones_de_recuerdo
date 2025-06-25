@@ -14,6 +14,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 import androidx.navigation.NavController
+import com.example.constelaciones.ui.components.EstrellasBackground
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -65,7 +66,7 @@ fun SplashScreen(navController: NavController) {
         contentAlignment = Alignment.Center
     ) {
         // fondo de background estrellado
-        StarryBackdrop()
+        EstrellasBackground(modifier = Modifier.matchParentSize())
 
         // constelacion generada random
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -116,23 +117,3 @@ fun SplashScreen(navController: NavController) {
     }
 }
 
-@Composable
-fun StarryBackdrop(starCount: Int = 300) {
-    val stars = remember {
-        List(starCount) {
-            Offset(Random.nextFloat(), Random.nextFloat())
-        }
-    }
-
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        val width = size.width
-        val height = size.height
-        stars.forEach { star ->
-            drawCircle(
-                color = Color.White.copy(alpha = 0.35f), // más opaco
-                radius = 2f, // más grande
-                center = Offset(star.x * width, star.y * height)
-            )
-        }
-    }
-}

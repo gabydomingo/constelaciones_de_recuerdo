@@ -11,12 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.constelaciones.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.*
 import com.google.android.gms.common.api.ApiException
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.rememberAsyncImagePainter
+
 
 @Composable
 fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
@@ -71,36 +75,30 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = and
                     .fillMaxWidth()
                     .padding(32.dp)
             ) {
-                TextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("Correo electrónico") },
-                    modifier = Modifier.fillMaxWidth()
+                // Logo centrado
+                Image(
+                    painter = rememberAsyncImagePainter("https://kksqeezvcyujrkjnkrjo.supabase.co/storage/v1/object/public/logo//ChatGPT%20Image%2025%20jun%202025,%2003_18_21%20a.m..png"),
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .size(180.dp)
+                        .padding(bottom = 48.dp),
+                    contentScale = ContentScale.Fit
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                TextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("Contraseña") },
-                    modifier = Modifier.fillMaxWidth(),
-                    visualTransformation = PasswordVisualTransformation()
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                Button(onClick = { /* usar mas adelante cuando pueda tomar datos de la cuenta */ }, modifier = Modifier.fillMaxWidth()) {
-                    Text("Iniciar sesión")
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                /// unico usable verdaderamente por ahora
+
+                // Botón Google
                 Button(
                     onClick = {
                         launcher.launch(signInRequest)
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                 ) {
-                    Text("Registrarse con Google", color = Color.Black)
+                    Text("Iniciar con Google", color = Color.Black)
                 }
             }
+
         }
     }
 }
