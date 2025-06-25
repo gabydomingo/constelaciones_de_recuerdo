@@ -1,9 +1,5 @@
 package com.example.constelaciones.ui.screens.profile
 
-///modificar mas adelante: guarda la img en firebase pero no la muestra en app
-/// tomar info del mail solo parte ddelante del arroba.
-
-import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
@@ -11,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
@@ -29,41 +26,36 @@ import com.example.constelaciones.viewmodel.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
-@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun ProfileScreen(navController: NavController) {
-    val scope = rememberCoroutineScope()
-    val firebaseUser = FirebaseAuth.getInstance().currentUser
-    val email = firebaseUser?.email ?: ""
-
     val viewModel: ProfileViewModel = viewModel()
     val username by viewModel.username
     val profileImageUrl by viewModel.profileImageUrl
+    val firebaseUser = FirebaseAuth.getInstance().currentUser
+    val email = firebaseUser?.email.orEmpty()
 
     val snackbarHostState = remember { SnackbarHostState() }
-    var profileImageUri by remember { mutableStateOf<Uri?>(null) }
+    val scope = rememberCoroutineScope()
 
-    // cargar datos del usuario al entrar (funciona y no funciona)
-    scope.launch {
-        snackbarHostState.showSnackbar("Perfil guardado correctamente")
-    }
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
     val launcher = rememberLauncherForActivityResult(GetContent()) { uri: Uri? ->
-        uri?.let {
-            profileImageUri = it
-        }
+        selectedImageUri = uri
     }
 
-    val imagePainter = rememberAsyncImagePainter(
-        model = profileImageUri ?: profileImageUrl ?: ""
+    val painter = rememberAsyncImagePainter(
+        model = selectedImageUri ?: profileImageUrl.orEmpty()
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.loadUserProfile()
+    }
 
     ScaffoldWithBackground(navController = navController) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
-            contentAlignment = Alignment.TopCenter
+                .padding(padding)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -73,7 +65,6 @@ fun ProfileScreen(navController: NavController) {
             ) {
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // imagen de perfil (funciona y no)
                 Box(
                     modifier = Modifier
                         .size(100.dp)
@@ -81,12 +72,12 @@ fun ProfileScreen(navController: NavController) {
                         .clickable { launcher.launch("image/*") }
                 ) {
                     Image(
-                        painter = imagePainter,
+                        painter = painter,
                         contentDescription = "Foto de perfil",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
-                    if (profileImageUri == null && profileImageUrl.isNullOrEmpty()) {
+                    if (selectedImageUri == null && profileImageUrl.isNullOrBlank()) {
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Icono perfil",
@@ -113,24 +104,29 @@ fun ProfileScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Button(onClick = {
-                    viewModel.saveUserProfile(
-                        viewModel.username.value,
-                        profileImageUri,
-                        onSuccess = {
-                            profileImageUri = null
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Perfil guardado correctamente")
+                Button(
+                    onClick = {
+                        viewModel.saveUserProfile(
+                            username = username,
+                            profileImageUri = selectedImageUri,
+                            onSuccess = {
+                                selectedImageUri = null
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Perfil guardado correctamente")
+                                }
+                            },
+                            onError = { e ->
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Error al guardar: ${e.message}")
+                                }
                             }
-                        },
-                        onError = {
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Error al guardar: ${it.message}")
-                            }
-                        }
-                    )
-                }) {
-                    Text("Guardar cambios")
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7C3AED))
+                ) {
+                    Text("Guardar cambios", color = Color.White)
                 }
 
                 Spacer(modifier = Modifier.height(40.dp))
@@ -143,11 +139,19 @@ fun ProfileScreen(navController: NavController) {
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                 ) {
                     Text("Cerrar sesión", color = Color.White)
                 }
             }
+
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp)
+            )
         }
     }
 }

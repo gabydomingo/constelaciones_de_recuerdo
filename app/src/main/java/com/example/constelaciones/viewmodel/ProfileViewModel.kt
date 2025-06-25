@@ -13,18 +13,26 @@ class ProfileViewModel : ViewModel() {
     private val database = FirebaseDatabase.getInstance().reference
     private val storage = FirebaseStorage.getInstance().reference
 
+    // Estados observables
     val username = mutableStateOf("")
     val profileImageUrl = mutableStateOf<String?>(null)
 
+    /** Lee username y profileImageUrl desde Realtime Database */
     fun loadUserProfile() {
         val user = auth.currentUser ?: return
-        database.child("users").child(user.uid).get().addOnSuccessListener { snapshot ->
-            username.value = snapshot.child("username").value as? String
-                ?: user.email?.substringBefore("@").orEmpty()
-            profileImageUrl.value = snapshot.child("profileImageUrl").value as? String
-        }
+        database.child("users").child(user.uid)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                // Si no hay username, usamos la parte del email antes de la @
+                username.value = snapshot.child("username").getValue(String::class.java)
+                    ?: user.email?.substringBefore("@").orEmpty()
+                profileImageUrl.value = snapshot.child("profileImageUrl").getValue(String::class.java)
+            }
     }
 
+    /**
+     * Sube la nueva imagen (si la hay) y luego guarda username e imageUrl en Realtime Database
+     */
     fun saveUserProfile(
         username: String,
         profileImageUri: Uri?,
@@ -43,7 +51,14 @@ class ProfileViewModel : ViewModel() {
                 }
                 .addOnFailureListener(onError)
         } else {
-            uploadUserData(user.uid, user.email ?: "", username, profileImageUrl.value, onSuccess, onError)
+            uploadUserData(
+                uid = user.uid,
+                email = user.email ?: "",
+                username = username,
+                imageUrl = profileImageUrl.value,
+                onSuccess = onSuccess,
+                onError = onError
+            )
         }
     }
 
@@ -61,8 +76,9 @@ class ProfileViewModel : ViewModel() {
             "username" to username,
             "profileImageUrl" to (imageUrl ?: "")
         )
-        database.child("users").child(uid).setValue(userMap)
+        database.child("users").child(uid)
+            .setValue(userMap)
             .addOnSuccessListener { onSuccess() }
-            .addOnFailureListener(onError)
+            .addOnFailureListener { onError(it) }
     }
 }
