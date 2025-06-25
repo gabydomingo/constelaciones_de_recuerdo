@@ -6,7 +6,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -21,7 +20,6 @@ import com.example.constelaciones.ui.components.EstrellasBackground
 import com.example.constelaciones.ui.components.MemoryDetailCard
 import com.example.constelaciones.viewmodel.ConstellationViewModel
 import kotlinx.coroutines.delay
-import kotlin.random.Random
 
 @Composable
 fun ConstellationScreen(navController: NavController) {
@@ -31,7 +29,7 @@ fun ConstellationScreen(navController: NavController) {
 
     var selectedMemory by remember { mutableStateOf<MemoryModel?>(null) }
 
-    // Cargamos memorias y posiciones al entrar
+    // Carga inicial
     LaunchedEffect(Unit) {
         viewModel.loadMemories()
     }
@@ -42,7 +40,9 @@ fun ConstellationScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(padding)
                 .background(
-                    Brush.verticalGradient(listOf(Color(0xFF16185C), Color(0xFF00021F)))
+                    Brush.verticalGradient(
+                        listOf(Color(0xFF16185C), Color(0xFF00021F))
+                    )
                 )
         ) {
             EstrellasBackground(modifier = Modifier.matchParentSize())
@@ -59,7 +59,11 @@ fun ConstellationScreen(navController: NavController) {
                 MemoryDetailCard(
                     memory = memory,
                     onDismiss = { selectedMemory = null },
-                    onToggleFavorito = { viewModel.toggleFavorito(memory) }
+                    onToggleFavorito = { viewModel.toggleFavorito(memory) },
+                    onEdit = {
+                        // Navega a tu pantalla de edición, pasando el ID
+                        navController.navigate("editMemory/${memory.id}")
+                    }
                 )
             }
         }
@@ -91,7 +95,10 @@ fun DrawConstellation(
                 detectTapGestures { tapOffset ->
                     visibleMemories.forEach { memory ->
                         positions[memory.id]?.let { normPos ->
-                            val realPos = Offset(normPos.x * screenSize.first, normPos.y * screenSize.second)
+                            val realPos = Offset(
+                                x = normPos.x * screenSize.first,
+                                y = normPos.y * screenSize.second
+                            )
                             if ((tapOffset - realPos).getDistance() < 20f) {
                                 onMemoryClick(memory)
                             }
@@ -103,14 +110,12 @@ fun DrawConstellation(
         // actualizamos el tamaño de pantalla
         screenSize = size.width to size.height
 
-        // convertimos posiciones normalizadas a reales
+        // dibujamos líneas conectando
         val coords = visibleMemories.mapNotNull { memory ->
             positions[memory.id]?.let { norm ->
                 Offset(norm.x * size.width, norm.y * size.height)
             }
         }
-
-        // dibujamos líneas
         coords.zipWithNext { a, b ->
             drawLine(
                 color = Color.White.copy(alpha = 0.2f),
@@ -132,4 +137,3 @@ fun DrawConstellation(
         }
     }
 }
-

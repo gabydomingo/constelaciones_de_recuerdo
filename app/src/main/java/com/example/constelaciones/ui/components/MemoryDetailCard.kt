@@ -3,12 +3,19 @@ package com.example.constelaciones.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarBorder
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.StarOutline
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,18 +25,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.constelaciones.data.model.MemoryModel
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.filled.StarOutline
-import androidx.compose.foundation.rememberScrollState
-
 
 @Composable
 fun MemoryDetailCard(
     memory: MemoryModel,
     onDismiss: () -> Unit,
-    onToggleFavorito: () -> Unit
+    onToggleFavorito: () -> Unit,
+    onEdit: () -> Unit
 ) {
     val scrollState = rememberScrollState()
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,7 +49,7 @@ fun MemoryDetailCard(
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
         ) {
-            // Imagen y header
+            // --- Header con imagen y botones ---
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -58,6 +63,7 @@ fun MemoryDetailCard(
                     modifier = Modifier.fillMaxSize()
                 )
 
+                // Favorito
                 IconToggleButton(
                     checked = memory.isFavorito,
                     onCheckedChange = { onToggleFavorito() },
@@ -71,6 +77,22 @@ fun MemoryDetailCard(
                         tint = if (memory.isFavorito) Color.Yellow else Color.White
                     )
                 }
+
+                // Editar
+                IconButton(
+                    onClick = onEdit,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Editar recuerdo",
+                        tint = Color.White
+                    )
+                }
+
+                // Cerrar
                 IconButton(
                     onClick = onDismiss,
                     modifier = Modifier
@@ -79,7 +101,7 @@ fun MemoryDetailCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Cerrar",
+                        contentDescription = "Cerrar detalle",
                         tint = Color.White
                     )
                 }
@@ -87,7 +109,7 @@ fun MemoryDetailCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Contenido de texto
+            // --- Contenido de texto ---
             Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                 Text(
                     text = memory.titulo,
