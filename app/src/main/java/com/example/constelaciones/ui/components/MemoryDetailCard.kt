@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,6 +18,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.constelaciones.data.model.MemoryModel
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarOutline
+
 
 @Composable
 fun MemoryDetailCard(
@@ -45,6 +49,7 @@ fun MemoryDetailCard(
                     modifier = Modifier.fillMaxSize()
                 )
 
+                // Texto descriptivo
                 Text(
                     text = "Esto sucedió el día de tu recuerdo.",
                     color = Color.White,
@@ -53,34 +58,39 @@ fun MemoryDetailCard(
                         .align(Alignment.BottomStart)
                         .padding(8.dp)
                 )
-            }
 
-            // Row con estrella de favorito y botón de cerrar
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onToggleFavorito) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "Marcar como favorito",
-                        tint = if (memory.isFavorito) Color.Yellow else Color.Gray
-                    )
-                }
-
-                IconButton(onClick = onDismiss) {
+                // Botón cerrar
+                IconButton(
+                    onClick = onDismiss,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                ) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Cerrar",
                         tint = Color.White
                     )
                 }
+
+                // Estrella de favorito
+                IconToggleButton(
+                    checked = memory.isFavorito == true,
+                    onCheckedChange = { onToggleFavorito() },
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = if (memory.isFavorito == true)
+                            Icons.Default.Star else Icons.Default.StarOutline,
+                        contentDescription = "Favorito",
+                        tint = if (memory.isFavorito == true) Color.Yellow else Color.White
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Text(
